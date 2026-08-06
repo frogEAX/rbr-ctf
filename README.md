@@ -16,7 +16,7 @@
 ```bash
 git clone https://github.com/ВАШ_ЮЗЕРНЕЙМ/ctf-challenge.git
 cd ctf-challenge
-
+```
 ### 3. Изменяйте файл student_exploit.sh, чтобы "вытащить" флаг из раннера.
 
 СДАЧА ФЛАГА:

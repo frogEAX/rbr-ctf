@@ -1,0 +1,51 @@
+name: "CTF: Steal the Secret Flag"
+
+on:
+  workflow_dispatch:
+    inputs:
+      contender_name:
+        description: 'Your name'
+        required: true
+        type: string
+        default: 'Test'
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  ctf-challenge:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout contender's code from PR
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      
+      - name: Info
+        run: |
+          echo "========================================="
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "Contender: ${{ github.event.pull_request.user.login }}"
+          else
+            echo "Contender: ${{ inputs.contender_name }}"
+          fi
+          echo "Repository: ${{ github.repository }}"
+          echo "========================================="
+      
+      - name: Run Vulnerable Action
+        id: vulnerable_action
+        uses: JohnnyConstantin/ctf-vulnerable-action@v1
+        with:
+          target_name: ${{ github.event_name == 'pull_request' && github.event.pull_request.user.login || inputs.contender_name }}
+          secret_flag: ${{ secrets.FLAG_SECRET }}
+      
+      - name: Completion
+        run: |
+          echo "Time from action: ${{ steps.vulnerable_action.outputs.current_time }}"
+          echo ""
+          echo "Check the logs above for the flag!"
+          echo "Did you create student_exploit.sh in your fork?"
